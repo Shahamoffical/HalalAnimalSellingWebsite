@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - HASC</title>
+    <!-- Tailwind CSS (Local Build) -->
+    <link rel="stylesheet" href="src/output.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-brand-green { background-color: #22c55e; }
+        .text-brand-green { color: #22c55e; }
+        .hover-brand-green:hover { background-color: #16a34a; }
+        .bg-brand-dark { background-color: #0F5132; }
+
+        /* Modal Transition Styles */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 relative">
+
+    <!-- 1. HEADER (Injected by header.js) -->
+    <div id="global-header"></div>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section class="bg-brand-green py-16 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/grass.png')] opacity-10"></div>
+        <div class="container mx-auto px-4 text-center text-white relative z-10">
+            <h1 class="text-4xl font-bold mb-4">We'd Love to Hear From You</h1>
+            <p class="text-green-100 max-w-2xl mx-auto">Have a question about our livestock, feed, or services? Our team is ready to help you.</p>
+        </div>
+    </section>
+
+    <!-- ================= INFO CARDS ================= -->
+    <section class="py-12 -mt-20 relative z-20">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Phone Card -->
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center hover:-translate-y-1 transition duration-300">
+                    <div class="w-14 h-14 bg-green-100 text-brand-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Call Us</h3>
+                    <p class="text-sm text-gray-500 mb-4">Mon-Sun from 8am to 6pm.</p>
+                    <a href="tel:+923001234567" class="text-brand-green font-bold hover:underline">+92 300 1234567</a>
+                </div>
+
+                <!-- Location Card -->
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center hover:-translate-y-1 transition duration-300">
+                    <div class="w-14 h-14 bg-green-100 text-brand-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Visit Us</h3>
+                    <p class="text-sm text-gray-500 mb-4">Come see our farm firsthand.</p>
+                    <p class="text-brand-green font-bold">Bahawalpur, Pakistan</p>
+                </div>
+
+                <!-- Email Card -->
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center hover:-translate-y-1 transition duration-300">
+                    <div class="w-14 h-14 bg-green-100 text-brand-green rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2">Email Us</h3>
+                    <p class="text-sm text-gray-500 mb-4">We usually reply within 24 hours.</p>
+                    <a href="mailto:info@hasc-farm.com" class="text-brand-green font-bold hover:underline">info@hasc-farm.com</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= MAIN CONTENT (Form & Map) ================= -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row gap-12">
+                
+                <!-- Contact Form -->
+                <div class="w-full lg:w-1/2">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                <input type="text" placeholder="John Doe" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                <input type="tel" placeholder="0300-1234567" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                            <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition bg-white">
+                                <option>General Inquiry</option>
+                                <option>Livestock Purchase</option>
+                                <option>Feed Subscription</option>
+                                <option>Veterinary Support</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                            <textarea rows="5" placeholder="How can we help you?" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none transition"></textarea>
+                        </div>
+
+                        <button type="button" class="bg-brand-green text-white px-8 py-3 rounded-lg font-bold hover:bg-green-600 transition shadow-md w-full md:w-auto">
+                            Send Message <i class="fa-solid fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Google Map -->
+                <div class="w-full lg:w-1/2 h-[500px] bg-gray-100 rounded-2xl overflow-hidden shadow-sm relative">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27848.330810243297!2d71.6579225!3d29.3957213!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x393b90c46c6114cd%3A0x629854728d71247!2sIslamia%20University%20Bahawalpur%20Baghdad%20Campus!5e0!3m2!1sen!2s!4v1716912345678!5m2!1sen!2s" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    
+                    <!-- Floating Note -->
+                    <div class="absolute bottom-6 left-6 right-6 bg-white p-4 rounded-xl shadow-lg flex items-center gap-4">
+                        <div class="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-info"></i>
+                        </div>
+                        <p class="text-xs text-gray-600"><strong>Note:</strong> Visiting for Qurbani selection? Please call us 1 hour before arrival to ensure staff availability.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= TESTIMONIALS SECTION ================= -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-12">What Our Customers Say</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-gray-50 p-8 rounded-xl text-left border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 leading-relaxed">"Excellent quality animals and professional service. The cow we purchased was healthy and well-maintained. Highly recommended!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Ahmed Hassan</p>
+                            <p class="text-xs text-gray-500">Farmer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-gray-50 p-8 rounded-xl text-left border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 leading-relaxed">"Great experience! The delivery was on time and the goats were exactly as described. The team is very knowledgeable."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Fatima Ali</p>
+                            <p class="text-xs text-gray-500">Business Owner</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-gray-50 p-8 rounded-xl text-left border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 leading-relaxed">"Outstanding service and quality. The animals are well-cared for and the prices are reasonable. Will definitely order again."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Omar Khan</p>
+                            <p class="text-xs text-gray-500">Livestock Trader</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. FOOTER (Injected by footer.js) -->
+    <div id="global-footer"></div>
+
+    <!-- 3. SCRIPTS (Load Order Important) -->
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
+
+</body>
+</html>

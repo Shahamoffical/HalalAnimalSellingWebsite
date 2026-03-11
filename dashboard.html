@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - HASC</title>
+    <!-- Tailwind CSS (Local Build) -->
+    <link rel="stylesheet" href="src/output.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // --- 1. SECURITY CHECK ---
+        // If user is not logged in, redirect to Home immediately
+        const userInfo = localStorage.getItem('userInfo');
+        if (!userInfo) {
+            // Redirect to home page if not logged in
+            window.location.href = './index.html';
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-brand-green { background-color: #0F5132; }
+        .bg-brand-light { background-color: #22c55e; }
+        .text-brand-green { color: #0F5132; }
+        .text-brand-light { color: #22c55e; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        #notification-dropdown {
+            transform-origin: top right;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex h-screen overflow-hidden">
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="w-64 bg-brand-green text-white flex-shrink-0 flex flex-col transition-all duration-300 hidden md:flex">
+        <!-- Logo Area -->
+        <div class="p-6 flex items-center gap-3 border-b border-white/10">
+            <div class="bg-white text-brand-green p-2 rounded-lg">
+                <i class="fa-solid fa-leaf text-xl"></i>
+            </div>
+            <span class="text-2xl font-bold tracking-tight">HASC</span>
+        </div>
+
+        <!-- Menu -->
+        <nav class="flex-1 overflow-y-auto py-6 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-6 py-3 bg-white/10 border-r-4 border-brand-light text-white">
+                <i class="fa-solid fa-gauge-high w-5 text-center"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="#" onclick="openModal('livestock-modal')" class="flex items-center gap-3 px-6 py-3 text-green-100 hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-cow w-5 text-center"></i>
+                <span class="font-medium">My Livestock</span>
+            </a>
+            <a href="#" onclick="openModal('subscription-modal')" class="flex items-center gap-3 px-6 py-3 text-green-100 hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-box-open w-5 text-center"></i>
+                <span class="font-medium">Feed Subscription</span>
+            </a>
+            <a href="#" onclick="openModal('health-modal')" class="flex items-center gap-3 px-6 py-3 text-green-100 hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-file-medical w-5 text-center"></i>
+                <span class="font-medium">Health Reports</span>
+            </a>
+            <a href="#" onclick="openModal('order-modal')" class="flex items-center gap-3 px-6 py-3 text-green-100 hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-cart-shopping w-5 text-center"></i>
+                <span class="font-medium">Order History</span>
+            </a>
+            <a href="#" onclick="openModal('profile-modal')" class="flex items-center gap-3 px-6 py-3 text-green-100 hover:bg-white/5 hover:text-white transition">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span class="font-medium">Profile Settings</span>
+            </a>
+        </nav>
+
+        <!-- Logout Button -->
+        <div class="p-6 border-t border-white/10">
+            <a href="#" onclick="logoutUser()" class="flex items-center gap-3 text-green-200 hover:text-white transition">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Log Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-100 h-20 flex items-center justify-between px-8 flex-shrink-0">
+            <button class="md:hidden text-gray-600 text-2xl mr-4"><i class="fa-solid fa-bars"></i></button>
+
+            <div>
+                <!-- Dynamic Name Display -->
+                <h1 class="text-xl font-bold text-gray-900">Good Morning, <span id="header-name">User</span>!</h1>
+                <p class="text-xs text-gray-500">Here's what's happening with your livestock today.</p>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <button onclick="openModal('visit-modal')" class="bg-brand-green text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-calendar-check"></i> Request Visit
+                </button>
+                
+                <!-- Notification Bell -->
+                <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                    <i class="fa-regular fa-bell text-xl text-gray-500 hover:text-brand-green transition"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 w-2.5 h-2.5 rounded-full border-2 border-white"></span>
+                    
+                    <div id="notification-dropdown" class="hidden absolute right-0 mt-4 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+                        <div class="p-4 border-b border-gray-50 bg-gray-50 flex justify-between items-center">
+                            <h4 class="font-bold text-sm text-gray-700">Notifications</h4>
+                            <span class="text-xs text-brand-light font-medium cursor-pointer">Mark all read</span>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto" id="notification-list">
+                            <!-- Populated dynamically -->
+                            <div class="p-4 text-center text-xs text-gray-500">No new notifications</div>
+                        </div>
+                        <div class="p-3 bg-gray-50 text-center border-t border-gray-100">
+                            <a href="#" class="text-xs font-bold text-brand-green hover:underline">View All Activity</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pl-6 border-l border-gray-100 cursor-pointer" onclick="openModal('profile-modal')">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-green-100">
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-8">
+            
+            <!-- Stats Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between h-36 cursor-pointer hover:shadow-md transition" onclick="openModal('livestock-modal')">
+                    <div class="flex justify-between items-start">
+                        <div class="w-10 h-10 rounded-full bg-green-50 text-brand-light flex items-center justify-center text-lg"><i class="fa-solid fa-cow"></i></div>
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">Updated</span>
+                    </div>
+                    <div><p class="text-gray-500 text-xs font-medium">Total Animals Owned</p><h3 class="text-3xl font-bold text-gray-900" id="total-animals-count">0</h3></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between h-36 cursor-pointer hover:shadow-md transition" onclick="openModal('subscription-modal')">
+                    <div class="flex justify-between items-start">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-lg"><i class="fa-solid fa-box-open"></i></div>
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded" id="sub-status-badge">Inactive</span>
+                    </div>
+                    <div><p class="text-gray-500 text-xs font-medium">Active Subscription</p><h3 class="text-xl font-bold text-gray-900" id="current-plan-display">None</h3></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between h-36">
+                    <div class="flex flex-col justify-between h-full">
+                        <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-500 flex items-center justify-center text-lg"><i class="fa-solid fa-clock"></i></div>
+                        <div><p class="text-gray-500 text-xs font-medium">Days Remaining</p><h3 class="text-xl font-bold text-gray-900" id="days-remaining-display">0 Days <span class="text-xs font-normal text-gray-400 block">Until renewal</span></h3></div>
+                    </div>
+                    <div class="relative w-16 h-16">
+                        <svg class="w-full h-full transform -rotate-90"><circle cx="32" cy="32" r="28" stroke="#f3f4f6" stroke-width="6" fill="transparent" /><circle cx="32" cy="32" r="28" stroke="#22c55e" stroke-width="6" fill="transparent" stroke-dasharray="175" stroke-dashoffset="40" /></svg>
+                        <span class="absolute inset-0 flex items-center justify-center text-sm font-bold text-gray-700" id="days-remaining-circle">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile & Activity Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Profile Card -->
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-lg">My Profile</h3>
+                        <button onclick="openModal('profile-modal')" class="text-gray-400 hover:text-brand-light transition" title="Edit Profile">
+                            <i class="fa-solid fa-pen-to-square text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div><p class="text-xs text-gray-400 mb-1">Full Name</p><p id="display-name" class="text-sm font-semibold text-gray-800">User</p></div>
+                        <div><p class="text-xs text-gray-400 mb-1">CNIC</p><p id="display-cnic" class="text-sm font-semibold text-gray-800">-</p></div>
+                        <div><p class="text-xs text-gray-400 mb-1">Phone Number</p><p id="display-phone" class="text-sm font-semibold text-gray-800">-</p></div>
+                        <div><p class="text-xs text-gray-400 mb-1">Delivery Address</p><p id="display-address" class="text-sm font-semibold text-gray-800">-</p></div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <h3 class="font-bold text-lg mb-6">Recent Activity</h3>
+                    <div class="space-y-6" id="activity-list">
+                        <!-- Populated by JS -->
+                        <p class="text-sm text-gray-400">No recent activity.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Livestock List Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-900">My Livestock</h2>
+                <a href="LiveStock.html" class="bg-brand-light text-white px-4 py-2 rounded-lg text-sm hover:opacity-90">Browse More Animals</a>
+            </div>
+
+            <!-- DYNAMIC ANIMAL CONTAINER -->
+            <div id="livestock-container" class="space-y-6">
+                <!-- Animals will be injected here via JS -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ================= MODALS ================= -->
+    
+    <!-- 1. PROFILE EDIT MODAL -->
+    <div id="profile-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('profile-modal')"></div>
+        <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Edit Profile</h3>
+                <button onclick="closeModal('profile-modal')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="edit-profile-form" class="space-y-4">
+                <!-- READONLY FIELDS -->
+                <div><label class="block text-xs font-bold text-gray-700 mb-1">Full Name <span class="text-red-500 text-[10px]">(ReadOnly)</span></label><input type="text" id="input-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed" readonly></div>
+                <div><label class="block text-xs font-bold text-gray-700 mb-1">CNIC <span class="text-red-500 text-[10px]">(ReadOnly)</span></label><input type="text" id="input-cnic" class="w-full px-4 py-2 rounded-lg border border-gray-200 bg-gray-100 text-gray-500 cursor-not-allowed" readonly></div>
+                <!-- EDITABLE FIELDS -->
+                <div><label class="block text-xs font-bold text-gray-700 mb-1">Phone Number</label><input type="text" id="input-phone" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-green outline-none"></div>
+                <div><label class="block text-xs font-bold text-gray-700 mb-1">Delivery Address</label><textarea id="input-address" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-green outline-none"></textarea></div>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeModal('profile-modal')" class="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50">Cancel</button>
+                    <button type="button" onclick="saveProfile()" class="flex-1 px-4 py-2 bg-brand-green text-white rounded-lg hover:opacity-90">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. VISIT REQUEST MODAL -->
+    <div id="visit-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('visit-modal')"></div>
+        <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Schedule Farm Visit</h3>
+                <button onclick="closeModal('visit-modal')" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="visit-form" class="space-y-4">
+                <div><label class="block text-xs font-bold text-gray-700 mb-1">Your Name</label><input type="text" id="visit-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-green outline-none"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1">Date</label><input type="date" id="visit-date" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-green outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-700 mb-1">Time</label><input type="time" id="visit-time" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-green outline-none"></div>
+                </div>
+                <div><label class="block text-xs font-bold text-gray-700 mb-1">Purpose</label><select id="visit-purpose" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-green bg-white"><option>General Inspection</option><option>Vet Checkup</option><option>Qurbani Selection</option><option>Feed Consultation</option></select></div>
+                <button type="button" onclick="submitVisitRequest()" class="w-full mt-2 bg-brand-green text-white py-2 rounded-lg font-medium hover:opacity-90">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. REPORT MODAL -->
+    <div id="report-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('report-modal')"></div>
+        <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('report-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="w-full md:w-1/3">
+                    <img id="report-img" src="" crossorigin="anonymous" class="w-full h-48 object-cover rounded-xl mb-4 shadow-sm">
+                    <div class="bg-gray-50 p-4 rounded-xl text-center">
+                        <h3 id="report-name" class="font-bold text-gray-900 text-lg">Animal Name</h3>
+                        <p id="report-tag" class="text-xs text-gray-500 mb-3">Tag: #000</p>
+                        <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-bold">Healthy</span>
+                    </div>
+                </div>
+                <div class="w-full md:w-2/3">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Veterinary Health Report</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div><p class="text-xs text-gray-400 uppercase">Weight</p><p id="report-weight" class="font-bold text-gray-800">0 kg</p></div>
+                        <div><p class="text-xs text-gray-400 uppercase">Age</p><p class="font-bold text-gray-800" id="report-age">2.5 Years</p></div>
+                    </div>
+                    <button onclick="downloadReportPDF()" class="w-full mt-6 bg-brand-green text-white py-2 rounded-lg hover:opacity-90">Download PDF Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 4. SUBSCRIPTION REMINDER MODAL (NEW) -->
+    <div id="sub-reminder-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('sub-reminder-modal')"></div>
+        <div class="modal-content relative bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 text-center border-t-8 border-red-500">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 text-3xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Feed Plan Required</h3>
+            <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                You have livestock but no active feed subscription. Ensure their health by subscribing now.
+            </p>
+            <button onclick="window.location.href='feed.html'" class="w-full bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 transition shadow-lg">
+                Subscribe Now
+            </button>
+            <button onclick="closeModal('sub-reminder-modal')" class="text-xs text-gray-400 mt-4 hover:underline">Remind me later</button>
+        </div>
+    </div>
+
+    <!-- 5. OTHER MODALS (Placeholders) -->
+    <div id="livestock-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('livestock-modal')"></div><div class="modal-content bg-white rounded-2xl p-8 text-center"><h3 class="text-2xl font-bold mb-2">My Livestock Summary</h3><p class="mb-6">Total: <span id="popup-total-animals">0</span> Animals</p><button onclick="closeModal('livestock-modal')" class="bg-brand-green text-white px-4 py-2 rounded">Close</button></div></div>
+    
+    <!-- Updated Subscription Modal with Manage Button -->
+    <div id="subscription-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('subscription-modal')"></div>
+        <div class="modal-content bg-white rounded-2xl p-8 text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 text-3xl"><i class="fa-solid fa-box-open"></i></div>
+            <h3 class="text-2xl font-bold mb-2">Subscription Details</h3>
+            <p class="mb-4 text-gray-600" id="popup-sub-details">Loading...</p>
+            <div class="flex gap-2 justify-center">
+                 <button onclick="window.location.href='feed.html'" class="bg-brand-green text-white px-6 py-2 rounded-lg hover:opacity-90">Manage Subscription</button>
+                 <button onclick="closeModal('subscription-modal')" class="border border-gray-300 text-gray-500 px-4 py-2 rounded-lg">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="health-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('health-modal')"></div><div class="modal-content bg-white rounded-2xl p-8"><h3 class="text-2xl font-bold mb-4">Health Reports</h3><p class="mb-4">All animals healthy.</p><button onclick="closeModal('health-modal')" class="bg-brand-green text-white px-4 py-2 rounded">Close</button></div></div>
+    <div id="order-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('order-modal')"></div><div class="modal-content bg-white rounded-2xl p-8"><h3 class="text-2xl font-bold mb-4">Order History</h3><p class="mb-4">No recent orders.</p><button onclick="closeModal('order-modal')" class="bg-brand-green text-white px-4 py-2 rounded">Close</button></div></div>
+
+    <!-- Scripts -->
+    <script>
+        // --- DATA INITIALIZATION ---
+        // 1. User Data
+        let user = JSON.parse(localStorage.getItem('userInfo'));
+        if (user) {
+            document.getElementById('header-name').innerText = user.name ? user.name.split(' ')[0] : 'User';
+            document.getElementById('display-name').innerText = user.name || 'User';
+            document.getElementById('display-cnic').innerText = user.cnic || '-';
+            document.getElementById('display-phone').innerText = user.phone || '-';
+            document.getElementById('display-address').innerText = user.address || '-';
+        }
+
+        // 2. Livestock Data Initialization (Empty for new users)
+        // Check if there are items in the cart waiting to be added after checkout
+        // We will default to empty if not found
+        // Use a persistent key 'hasc_livestock_data' to store animal history
+        let myAnimals = JSON.parse(localStorage.getItem('hasc_livestock_data')) || [];
+
+        // Mock Default Data for Demo (Only if completely empty for first time user experience demonstration if desired,
+        // but user requested empty start. We will respect empty start.)
+        // But for visual confirmation of "Dummy" data being replaced, we just use the empty array above.
+        // IF you want to pre-fill with dummy data for testing, uncomment below line:
+        // if(myAnimals.length === 0) myAnimals = [ { id: 'BK-402', name: 'Sahiwal Bull', initialWeight: 400, purchaseDate: new Date(Date.now() - 1000*60*60*24*7*4).toISOString(), age: '2 Years', health: 'Excellent', img: 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400', type: 'Bull' } ];
+        
+        // --- CRITICAL: Process Cart Items Logic ---
+        // REMOVED REFERRER CHECK: This logic now runs on load regardless of source
+        // This handles cases where redirect might drop referrer or manual reload happens
+        // It relies on the cart still existing in localStorage (which checkout.html clears, but we can check a 'pending_order' flag if needed)
+        // Actually, checkout.html clears hasc_cart. So this logic inside dashboard.html is redundant IF checkout.html does the job.
+        // The previous checkout.html code I provided DOES the job of moving items.
+        // So we can simplify this block to just read the data that checkout.html ALREADY saved.
+        
+        // Just in case checkout didn't clear it (fallback):
+        const pendingCart = JSON.parse(localStorage.getItem('hasc_cart')) || [];
+        if (pendingCart.length > 0) {
+            // ... (Logic moved to checkout.html, keeping this empty prevents double-add)
+        }
+
+        // 3. Subscription Logic
+        let subData = JSON.parse(localStorage.getItem('hasc_subscription')) || {
+            plan: 'None',
+            expiry: new Date().toISOString(),
+            active: false
+        };
+
+        // URL param check is a fallback, main logic is in checkout.html now
+        const urlParams = new URLSearchParams(window.location.search);
+        const newPlan = urlParams.get('plan');
+        if(newPlan) {
+           // ... (This handled by checkout.html now, visuals update below)
+        }
+
+        const expDate = new Date(subData.expiry);
+        const today = new Date();
+        const diffTime = expDate - today;
+        let daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (daysLeft < 0) daysLeft = 0;
+        
+        // Ensure status reflects expiration
+        if(daysLeft === 0) subData.active = false;
+
+        document.getElementById('current-plan-display').innerText = subData.active ? subData.plan + ' Plan' : 'None';
+        document.getElementById('days-remaining-display').innerHTML = `${daysLeft} Days <span class="text-xs font-normal text-gray-400 block">Until renewal</span>`;
+        document.getElementById('days-remaining-circle').innerText = daysLeft;
+        document.getElementById('popup-sub-details').innerText = subData.active ? `${subData.plan} Plan - ${daysLeft} Days Remaining` : "No Active Plan";
+        
+        const badge = document.getElementById('sub-status-badge');
+        if(badge) {
+            badge.innerText = subData.active ? 'Active' : 'Inactive';
+            badge.className = subData.active 
+                ? 'text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded' 
+                : 'text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded';
+        }
+
+        // --- CHECK REMINDER LOGIC (12 Hour Simulation) ---
+        function checkSubscriptionReminder() {
+            // Logic: If User has Animals AND No Active Subscription
+            if (myAnimals.length > 0 && !subData.active) {
+                // Simulating the "12 hour check" with a 5 second delay for demo
+                setTimeout(() => {
+                    addNotification('Action Required', 'Your livestock needs a feed plan. Subscribe now!', 'triangle-exclamation', 'red');
+                    openModal('sub-reminder-modal');
+                }, 5000); 
+            }
+        }
+        // Run check on load
+        checkSubscriptionReminder();
+
+        // 4. Render Livestock
+        const livestockContainer = document.getElementById('livestock-container');
+        document.getElementById('total-animals-count').innerText = myAnimals.length;
+        document.getElementById('popup-total-animals').innerText = myAnimals.length;
+
+        if (myAnimals.length === 0) {
+            livestockContainer.innerHTML = `
+                <div class="text-center py-12 bg-white rounded-xl border border-dashed border-gray-300">
+                    <div class="text-gray-300 mb-4 text-4xl"><i class="fa-solid fa-cow"></i></div>
+                    <h3 class="text-lg font-medium text-gray-900">No livestock found</h3>
+                    <p class="text-gray-500 text-sm mt-1">Purchase animals from the store to see them here.</p>
+                    <a href="LiveStock.html" class="inline-block mt-4 text-brand-green font-bold text-sm hover:underline">Browse Store</a>
+                </div>
+            `;
+        } else {
+            livestockContainer.innerHTML = '';
+            myAnimals.forEach((animal, index) => {
+                // --- GROWTH CALCULATION LOGIC ---
+                // Calculate weeks since purchase
+                const purchaseDate = new Date(animal.purchaseDate);
+                const now = new Date();
+                const diffTime = Math.abs(now - purchaseDate);
+                const weeksOwned = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7)); 
+                
+                // Increase weight by 2.5kg per week
+                const weightGain = weeksOwned * 2.5;
+                const currentWeight = (animal.initialWeight + weightGain).toFixed(1); // 1 decimal place
+
+                // Generate Chart Data (Simulating past 4 weeks relative to current)
+                // If just bought (weeksOwned=0), show flat recent history or just the base weight
+                // We'll show a trend leading up to current weight
+                const growthData = [
+                    currentWeight - 7.5 > 0 ? currentWeight - 7.5 : animal.initialWeight,
+                    currentWeight - 5.0 > 0 ? currentWeight - 5.0 : animal.initialWeight,
+                    currentWeight - 2.5 > 0 ? currentWeight - 2.5 : animal.initialWeight,
+                    currentWeight
+                ];
+
+                const cardHTML = `
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+                        <div class="flex flex-col lg:flex-row gap-8">
+                            <div class="w-full lg:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0">
+                                <img src="${animal.img}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-start mb-6">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-3">${animal.name} 
+                                            <span class="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">Healthy</span>
+                                        </h3>
+                                        <p class="text-sm text-gray-400">Tag ID: ${animal.id}</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="bg-brand-green text-white px-4 py-2 rounded text-xs font-medium hover:opacity-90" onclick="openReportModal('${animal.name}', '${animal.id}', '${currentWeight} kg', '${animal.img}', '${animal.age}')">View Report</button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 bg-gray-50 p-4 rounded-lg">
+                                    <div><p class="text-[10px] text-gray-400 uppercase font-bold">Current Weight</p><p class="text-lg font-bold text-gray-900">${currentWeight} kg</p></div>
+                                    <div><p class="text-[10px] text-gray-400 uppercase font-bold">Age</p><p class="text-sm font-bold text-gray-900 mt-1">${animal.age}</p></div>
+                                    <div><p class="text-[10px] text-gray-400 uppercase font-bold">Health Status</p><p class="text-sm font-bold text-gray-900 mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check text-green-500"></i> ${animal.health}</p></div>
+                                    <div><p class="text-[10px] text-gray-400 uppercase font-bold">Feed</p><p class="text-sm font-bold text-gray-900 mt-1">Normal</p></div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 font-medium mb-2">Weekly Weight Gain (Last 4 Weeks)</p>
+                                    <div class="h-24 w-full"><canvas id="chart-animal-${index}"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                livestockContainer.insertAdjacentHTML('beforeend', cardHTML);
+
+                // Init Chart for this animal
+                setTimeout(() => {
+                    const ctx = document.getElementById(`chart-animal-${index}`);
+                    if(ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                                datasets: [{
+                                    data: growthData,
+                                    borderColor: '#22c55e',
+                                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                    fill: true,
+                                    tension: 0.4
+                                }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } }, elements: { point: { radius: 0 } } }
+                        });
+                    }
+                }, 100);
+            });
+        }
+
+        // --- MODAL FUNCTIONS ---
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; 
+            if(id === 'visit-modal' && user) document.getElementById('visit-name').value = user.name;
+            if(id === 'profile-modal' && user) {
+                document.getElementById('input-name').value = user.name;
+                document.getElementById('input-cnic').value = user.cnic || '';
+                document.getElementById('input-phone').value = user.phone || '';
+                document.getElementById('input-address').value = user.address || '';
+            }
+        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = 'auto'; }
+
+        function logoutUser() { localStorage.removeItem('userInfo'); window.location.href = 'index.html'; }
+        function toggleNotifications() { document.getElementById('notification-dropdown').classList.toggle('hidden'); }
+
+        function saveProfile() {
+            const newPhone = document.getElementById('input-phone').value;
+            const newAddr = document.getElementById('input-address').value;
+            document.getElementById('display-phone').innerText = newPhone;
+            document.getElementById('display-address').innerText = newAddr;
+            user.phone = newPhone; user.address = newAddr;
+            localStorage.setItem('userInfo', JSON.stringify(user));
+            addNotification('Profile Updated', 'Contact details updated.', 'user-pen', 'green');
+            closeModal('profile-modal');
+        }
+
+        function submitVisitRequest() {
+            const date = document.getElementById('visit-date').value;
+            if(!date) return alert("Please select date");
+            addNotification('Visit Requested', 'Your request has been sent.', 'calendar-check', 'orange');
+            closeModal('visit-modal');
+        }
+
+        function addNotification(title, msg, icon, color) {
+            const html = `<div class="p-4 border-b border-gray-50 hover:bg-gray-50 transition flex gap-3 bg-${color}-50 border-l-4 border-${color}-500"><div class="w-8 h-8 rounded-full bg-white text-${color}-600 flex items-center justify-center flex-shrink-0 text-xs"><i class="fa-solid fa-${icon}"></i></div><div><p class="text-sm font-semibold text-gray-800">${title}</p><p class="text-xs text-gray-500">${msg}</p><p class="text-[10px] text-gray-400 mt-1">Just now</p></div></div>`;
+            document.getElementById('notification-list').insertAdjacentHTML('afterbegin', html);
+        }
+
+        // Report Logic
+        function openReportModal(name, tag, weight, imgSrc, age) {
+            document.getElementById('report-name').innerText = name;
+            document.getElementById('report-tag').innerText = "Tag ID: " + tag;
+            document.getElementById('report-weight').innerText = weight;
+            document.getElementById('report-age').innerText = age;
+            document.getElementById('report-img').src = imgSrc;
+            openModal('report-modal');
+        }
+
+        async function downloadReportPDF() {
+            if (!window.jspdf) return alert("PDF Lib Loading...");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFillColor(15, 81, 50); doc.rect(0, 0, 210, 30, 'F');
+            doc.setTextColor(255, 255, 255); doc.setFontSize(20); doc.text("HASC Report", 15, 20);
+            doc.setTextColor(0, 0, 0); doc.setFontSize(14);
+            const name = document.getElementById('report-name').innerText;
+            doc.text(`Animal: ${name}`, 15, 50);
+            doc.text(`Weight: ${document.getElementById('report-weight').innerText}`, 15, 60);
+            doc.text(`Age: ${document.getElementById('report-age').innerText}`, 15, 70);
+            
+            const imgElement = document.getElementById('report-img');
+            if (imgElement.complete) {
+                const canvas = document.createElement("canvas");
+                canvas.width = imgElement.naturalWidth; canvas.height = imgElement.naturalHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(imgElement, 0, 0);
+                try { doc.addImage(canvas.toDataURL("image/jpeg"), 'JPEG', 140, 40, 50, 50); } catch(e){}
+            }
+            doc.save(`${name}.pdf`);
+        }
+    </script>
+</body>
+</html>

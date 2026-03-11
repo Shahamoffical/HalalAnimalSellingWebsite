@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment Variables (contains secret passwords - NEVER push this!)
+.env
+
+# Very large image files (GitHub rejects files over 100MB)
+Assets/Feed & Care.jpg
+Assets/Feed31.jpg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

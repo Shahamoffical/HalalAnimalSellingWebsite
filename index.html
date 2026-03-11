@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HASC - Halal Animal Selling & Care</title>
+    <!-- Tailwind CSS (Local Build) -->
+    <link rel="stylesheet" href="src/output.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-brand-green { background-color: #22c55e; }
+        .text-brand-green { color: #22c55e; }
+        .hover-brand-green:hover { background-color: #16a34a; }
+        .bg-brand-dark { background-color: #0F5132; }
+        html { scroll-behavior: smooth; }
+        
+        /* Modal Transition Styles (Required for popups injected by header.js) */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 relative">
+
+    <!-- 1. HEADER PLACEHOLDER (Content injected by header.js) -->
+    <div id="global-header"></div>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section class="relative h-[500px] flex items-center justify-start overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=2074&auto=format&fit=crop" alt="Green Pasture" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10 text-white max-w-2xl">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
+                Premium Halal Livestock for <br> Qurbani & Farming
+            </h1>
+            <p class="text-lg text-gray-200 mb-8 font-light">
+                Healthy, vaccinated, and well-fed animals delivered to your doorstep with complete care and certification.
+            </p>
+            <a href="LiveStock.html" class="bg-brand-green text-white px-8 py-3 rounded-md font-semibold hover:bg-green-600 transition inline-block shadow-lg">
+                Browse Animals
+            </a>
+        </div>
+    </section>
+
+    <!-- ================= CATEGORIES SECTION ================= -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-10 text-gray-800">Browse by Category</h2>
+            
+            <div class="flex flex-wrap justify-center gap-8 md:gap-16">
+                <!-- Cows -->
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 md:w-24 md:h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-brand-green transition duration-300">
+                        <i class="fa-solid fa-cow text-3xl md:text-4xl text-brand-green group-hover:text-white transition"></i>
+                    </div>
+                    <span class="font-medium text-gray-700 group-hover:text-brand-green">Cows/Bulls</span>
+                </div>
+                <!-- Goats -->
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 md:w-24 md:h-24 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-orange-500 transition duration-300">
+                        <i class="fa-solid fa-sheet-plastic text-3xl md:text-4xl text-orange-500 group-hover:text-white transition"></i> 
+                    </div>
+                    <span class="font-medium text-gray-700 group-hover:text-orange-500">Goats/Sheep</span>
+                </div>
+                <!-- Camels -->
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 md:w-24 md:h-24 mx-auto bg-yellow-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-yellow-500 transition duration-300">
+                        <i class="fa-solid fa-paw text-3xl md:text-4xl text-yellow-600 group-hover:text-white transition"></i>
+                    </div>
+                    <span class="font-medium text-gray-700 group-hover:text-yellow-600">Camels</span>
+                </div>
+                <!-- Lambs -->
+                <div class="group cursor-pointer">
+                    <div class="w-20 h-20 md:w-24 md:h-24 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-500 transition duration-300">
+                        <i class="fa-solid fa-cloud-meatball text-3xl md:text-4xl text-purple-500 group-hover:text-white transition"></i>
+                    </div>
+                    <span class="font-medium text-gray-700 group-hover:text-purple-500">Lambs</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= LISTING 1: PREMIUM COWS ================= -->
+    <section id="cows" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-end mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Premium Cows</h3>
+                <a href="LiveStock.html" class="text-brand-green font-medium hover:underline text-sm flex items-center gap-1">
+                    View All <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100">
+                    <div class="h-56 bg-gray-200 relative">
+                        <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=2070&auto=format&fit=crop" alt="Cow" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-gray-900">Sahiwal Bull</h4>
+                        <p class="text-brand-green font-bold text-xl my-1">PKR 250,000</p>
+                        <p class="text-gray-500 text-sm mb-4">Weight: 450kg • Age: 2 years</p>
+                        <!-- ADD TO CART -->
+                        <button onclick="addToCart('Sahiwal Bull', '250,000', 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=400')" class="w-full bg-brand-green text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100">
+                    <div class="h-56 bg-gray-200 relative">
+                        <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=2000&auto=format&fit=crop" alt="Cow" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-gray-900">Holstein Friesian</h4>
+                        <p class="text-brand-green font-bold text-xl my-1">PKR 320,000</p>
+                        <p class="text-gray-500 text-sm mb-4">Weight: 520kg • Age: 4 years</p>
+                        <button onclick="addToCart('Holstein Friesian', '320,000', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400')" class="w-full bg-brand-green text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100">
+                    <div class="h-56 bg-gray-200 relative">
+                        <img src="Assets/Bull.jpg" alt="Cow" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-gray-900">Red Sindhi</h4>
+                        <p class="text-brand-green font-bold text-xl my-1">PKR 280,000</p>
+                        <p class="text-gray-500 text-sm mb-4">Weight: 480kg • Age: 3.5 years</p>
+                        <button onclick="addToCart('Red Sindhi', '280,000', 'Assets/Bull.jpg')" class="w-full bg-brand-green text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= LISTING 2: PREMIUM GOATS (UPDATED) ================= -->
+    <section id="goats" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-end mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Premium Goats</h3>
+                <a href="LiveStock.html" class="text-brand-green font-medium hover:underline text-sm flex items-center gap-1">
+                    View All <i class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Goat 1: Beetal -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100 group">
+                    <div class="h-56 bg-gray-200 relative">
+                        <img src="Assets/Bettal Goat.png" alt="Beetal Goat" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-gray-900">Beetal Goat</h4>
+                        <p class="text-brand-green font-bold text-xl my-1">PKR 45,000</p>
+                        <p class="text-gray-500 text-sm mb-4">Weight: 55kg • Age: 2 years</p>
+                        <!-- ADD TO CART LOGIC -->
+                        <button onclick="addToCart('Beetal Goat', '45,000', 'https://images.unsplash.com/photo-1560709401-4b13ee35d944?q=80&w=400')" class="w-full bg-brand-green text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Goat 2: Damascus -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100 group">
+                    <div class="h-56 bg-gray-200 relative">
+                        <img src="Assets/Sheep M.jpg" alt="Damascus Goat" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-gray-900">Damascus Goat</h4>
+                        <p class="text-brand-green font-bold text-xl my-1">PKR 65,000</p>
+                        <p class="text-gray-500 text-sm mb-4">Weight: 65kg • Age: 2.5 years</p>
+                        <button onclick="addToCart('Damascus Goat', '65,000', 'https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=400')" class="w-full bg-brand-green text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Goat 3: Teddy -->
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition overflow-hidden border border-gray-100 group">
+                    <div class="h-56 bg-gray-200 relative">
+                        <img src="Assets/Tadi Goat.jpg" alt="Teddy Goat" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-5">
+                        <h4 class="text-lg font-bold text-gray-900">Teddy Goat</h4>
+                        <p class="text-brand-green font-bold text-xl my-1">PKR 38,000</p>
+                        <p class="text-gray-500 text-sm mb-4">Weight: 35kg • Age: 1 year</p>
+                        <button onclick="addToCart('Teddy Goat', '38,000', 'https://images.unsplash.com/photo-1547969399-556488d752f4?q=80&w=400')" class="w-full bg-brand-green text-white py-2.5 rounded-lg font-medium hover:bg-green-600 transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FEED SECTION ================= -->
+    <section id="feed" class="bg-green-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="w-full md:w-1/2">
+                    <div class="rounded-2xl overflow-hidden shadow-lg h-80 relative">
+                        <img src="Assets/Grass.jpg" alt="Fresh Grass Feed" class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">100% Organic & Halal Feed</h2>
+                    <p class="text-gray-600 mb-8 leading-relaxed">
+                        We ensure every animal is raised on natural grass and premium grains. No harmful injections, just pure nutrition for healthy and happy livestock.
+                    </p>
+                    <a href="feed.html" class="bg-brand-green text-white px-8 py-3 rounded-md font-semibold hover:bg-green-600 transition shadow-lg inline-block">
+                        Shop Animal Feed
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+     <section class="py-24 bg-green-50" id="services" >
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-brand-green font-semibold tracking-wider uppercase text-sm">HASC Services</span>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4">Everything Your Pet Needs</h2>
+                <p class="text-gray-500 text-lg">From finding your perfect companion to ensuring their health and happiness, HASC provides top-tier services for pet lovers.</p>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="service-card bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl hover:border-green-500/30 group">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-brand-green transition-colors duration-300">
+                        <i class="fa-solid fa-paw text-3xl text-brand-green group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Premium Breeds</h3>
+                    <p class="text-gray-500 mb-6">Explore our wide selection of healthy, purebred pets. We connect you with ethically raised puppies, kittens, and exotic animals.</p>
+                    <a href="feed.html" class="inline-flex items-center font-semibold text-brand-green group-hover:translate-x-2 transition-transform">
+                        Find a Pet <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="service-card bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl hover:border-purple-500/30 group">
+                    <div class="w-16 h-16 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-600 transition-colors duration-300">
+                        <i class="fa-solid fa-user-doctor text-3xl text-purple-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Veterinary Checks</h3>
+                    <p class="text-gray-500 mb-6">Every animal undergoes a rigorous health screening by certified vets. We ensure fully vaccinated and healthy pets.</p>
+                    <a href="feed.html" class="inline-flex items-center font-semibold text-purple-600 group-hover:translate-x-2 transition-transform">
+                        Learn More <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="service-card bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl hover:border-green-500/30 group">
+                    <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors duration-300">
+                        <i class="fa-solid fa-truck-fast text-3xl text-green-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Safe Pet Delivery</h3>
+                    <p class="text-gray-500 mb-6">We offer climate-controlled, stress-free transportation to bring your new family member safely to your doorstep.</p>
+                    <a href="#" class="inline-flex items-center font-semibold text-green-600 group-hover:translate-x-2 transition-transform">
+                        Check Locations <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                 <!-- Service 4 -->
+                <div class="service-card bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl hover:border-orange-500/30 group">
+                    <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500 transition-colors duration-300">
+                        <i class="fa-solid fa-bone text-3xl text-orange-500 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Pet Supplies</h3>
+                    <p class="text-gray-500 mb-6">Shop premium food, toys, cages, and accessories specifically curated for the health and joy of your specific pet breed.</p>
+                    <a href="#" class="inline-flex items-center font-semibold text-orange-500 group-hover:translate-x-2 transition-transform">
+                        Shop Store <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                 <!-- Service 5 -->
+                <div class="service-card bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl hover:border-pink-500/30 group">
+                    <div class="w-16 h-16 bg-pink-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-pink-500 transition-colors duration-300">
+                        <i class="fa-solid fa-scissors text-3xl text-pink-500 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Grooming Services</h3>
+                    <p class="text-gray-500 mb-6">Professional grooming packages available to keep your pet looking their best, from nail trimming to full coat styling.</p>
+                    <a href="#" class="inline-flex items-center font-semibold text-pink-500 group-hover:translate-x-2 transition-transform">
+                        Book Session <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                 <!-- Service 6 -->
+                <div class="service-card bg-white p-8 rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl hover:border-teal-500/30 group">
+                    <div class="w-16 h-16 bg-teal-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-teal-500 transition-colors duration-300">
+                        <i class="fa-solid fa-graduation-cap text-3xl text-teal-500 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3">Training & Support</h3>
+                    <p class="text-gray-500 mb-6">Lifetime post-adoption support and access to expert trainers to help your pet settle into their new home perfectly.</p>
+                    <a href="#" class="inline-flex items-center font-semibold text-teal-500 group-hover:translate-x-2 transition-transform">
+                        Get Advice <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <!-- ================= TESTIMONIALS SECTION ================= -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-12">What Our Customers Say</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-gray-50 p-8 rounded-xl text-left border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 leading-relaxed">"Excellent quality animals and professional service. The cow we purchased was healthy and well-maintained. Highly recommended!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Ahmed Hassan</p>
+                            <p class="text-xs text-gray-500">Farmer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-gray-50 p-8 rounded-xl text-left border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 leading-relaxed">"Great experience! The delivery was on time and the goats were exactly as described. The team is very knowledgeable."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Fatima Ali</p>
+                            <p class="text-xs text-gray-500">Business Owner</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-gray-50 p-8 rounded-xl text-left border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="text-yellow-400 mb-4 text-sm">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6 leading-relaxed">"Outstanding service and quality. The animals are well-cared for and the prices are reasonable. Will definitely order again."</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://randomuser.me/api/portraits/men/86.jpg" alt="User" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-gray-900 text-sm">Omar Khan</p>
+                            <p class="text-xs text-gray-500">Livestock Trader</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ================= FOOTER (Injected by footer.js) ================= -->
+    <div id="global-footer"></div>
+
+    <!-- 2. SCRIPTS -->
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
+
+</body>
+</html>

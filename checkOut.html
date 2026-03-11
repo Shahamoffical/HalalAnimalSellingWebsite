@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - HASC</title>
+    <!-- Tailwind CSS (Local Build) -->
+    <link rel="stylesheet" href="src/output.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-brand-green { background-color: #22c55e; }
+        .text-brand-green { color: #22c55e; }
+        .hover-brand-green:hover { background-color: #16a34a; }
+        .bg-brand-dark { background-color: #0F5132; }
+        .border-brand-green { border-color: #22c55e; }
+
+        /* Custom Radio Button Styling */
+        input[type="radio"]:checked + div {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+        input[type="radio"]:checked + div .radio-circle {
+            background-color: #22c55e;
+            border-color: #22c55e;
+        }
+        input[type="radio"]:checked + div .radio-circle::after {
+            content: '';
+            display: block;
+            width: 8px; height: 8px;
+            background: white;
+            border-radius: 50%;
+            margin: 3px;
+        }
+
+        /* Modal Transition Styles */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Smooth height transition for card fields */
+        #card-details-wrapper {
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+        }
+        .hidden-height {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            padding: 0 1rem;
+            border-width: 0;
+        }
+        .visible-height {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-width: 1px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 relative">
+
+    <!-- 1. HEADER (Injected by header.js) -->
+    <div id="global-header"></div>
+
+    <!-- ================= BREADCRUMB & TITLE ================= -->
+    <div class="container mx-auto px-4 py-6">
+        <p class="text-xs text-gray-500 mb-2">
+            <a href="index.html" class="hover:text-brand-green">Home</a> <span class="mx-1">></span> 
+            <a href="#" onclick="openModal('view-cart-modal')" class="hover:text-brand-green">Cart</a> <span class="mx-1">></span> 
+            <span class="text-brand-green font-semibold">Checkout</span>
+        </p>
+    </div>
+
+    <!-- ================= MAIN CHECKOUT CONTENT ================= -->
+    <section class="container mx-auto px-4 mb-16">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- LEFT COLUMN: DETAILS & ADDRESS -->
+            <div class="w-full lg:w-7/12 space-y-6">
+                
+                <!-- Customer Details Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-brand-green">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Customer Details</h2>
+                    </div>
+
+                    <form class="space-y-5">
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Full Name<span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" id="cust-name" placeholder="Enter your full name" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                <i class="fa-solid fa-user absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- Father's Name -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Father's Name<span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" placeholder="Enter father's name" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                <i class="fa-solid fa-user-group absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- CNIC -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">CNIC Number<span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" placeholder="12345-1234567-1" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                <i class="fa-regular fa-id-card absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Gmail Address<span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="email" placeholder="your.email@gmail.com" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                <i class="fa-regular fa-envelope absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Phone Number<span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="tel" placeholder="+92 300 1234567" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                <i class="fa-solid fa-phone absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Shipping Address Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Shipping Address</h2>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Street Address -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Street Address<span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" placeholder="House #, Street name, Area" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                <i class="fa-solid fa-map-pin absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-5">
+                            <!-- City -->
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">City Name<span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="text" placeholder="e.g. Karachi" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                    <i class="fa-solid fa-city absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                                </div>
+                            </div>
+                            <!-- Postal Code -->
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Postal Code<span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="text" placeholder="75500" class="w-full pl-4 pr-10 py-3 rounded-lg border border-gray-200 focus:border-brand-green outline-none text-sm transition">
+                                    <i class="fa-solid fa-hashtag absolute right-4 top-3.5 text-gray-300 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: TOTAL & PAYMENT -->
+            <div class="w-full lg:w-5/12 space-y-6">
+
+                <!-- Order Total Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Order Total</h2>
+                    </div>
+
+                    <!-- Dynamic Cart Summary -->
+                    <div class="space-y-4 text-sm">
+                        <div id="checkout-items-list" class="text-xs text-gray-500 space-y-1 border-b border-gray-100 pb-4 mb-4">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <div class="flex justify-between text-gray-600">
+                            <span>Subtotal</span>
+                            <span class="font-semibold" id="checkout-subtotal">Rs. 0</span>
+                        </div>
+                        
+                        <div class="flex justify-between text-gray-600 pb-4 border-b border-gray-100">
+                            <span>Tax (GST ~2%)</span>
+                            <span class="font-semibold" id="checkout-tax">Rs. 0</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-green-50 p-4 rounded-lg">
+                            <span class="font-bold text-gray-900">Total Amount</span>
+                            <span class="font-bold text-xl text-brand-green" id="checkout-total">Rs. 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                            <i class="fa-regular fa-credit-card"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900">Payment Method</h2>
+                    </div>
+
+                    <div class="space-y-4" id="payment-options">
+                        
+                        <!-- Credit Card Option (Default) -->
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card" checked>
+                            <div class="border rounded-lg p-4 flex items-center justify-between transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">Credit/Debit Card</p>
+                                        <p class="text-[10px] text-gray-400">Visa/Mastercard accepted</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-1">
+                                    <i class="fa-brands fa-cc-visa text-blue-800 text-xl"></i>
+                                    <i class="fa-brands fa-cc-mastercard text-red-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Mobile Wallets -->
+                         <p class="text-xs font-bold text-gray-500 mt-4 mb-2 uppercase tracking-wide">Mobile Wallets</p>
+                        
+                         <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="wallet">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">JazzCash</span>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="wallet">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">EasyPaisa</span>
+                            </div>
+                        </label>
+
+                        <!-- Bank Transfer Options -->
+                        <p class="text-xs font-bold text-gray-500 mt-4 mb-2 uppercase tracking-wide">Bank Transfer</p>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">United Bank Limited (UBL)</span>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">Habib Bank Limited (HBL)</span>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">Meezan Bank</span>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">Bank AL Falah</span>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">MCB Bank</span>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">Allied Bank</span>
+                            </div>
+                        </label>
+                        
+                         <label class="block cursor-pointer">
+                            <input type="radio" name="payment" class="hidden" data-type="card">
+                            <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:bg-gray-50 transition">
+                                <div class="radio-circle w-4 h-4 rounded-full border border-gray-300"></div>
+                                <span class="text-sm font-medium text-gray-700">Askari Bank</span>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <!-- DYNAMIC CARD DETAILS FORM -->
+                    <div id="card-details-wrapper" class="visible-height bg-gray-50 p-4 rounded-lg border border-gray-200">
+                         <div class="space-y-4">
+                             <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Card Number</label>
+                                <div class="relative">
+                                    <input type="text" placeholder="0000 0000 0000 0000" class="w-full pl-10 pr-4 py-2 rounded border border-gray-300 focus:border-brand-green outline-none text-sm bg-white">
+                                    <i class="fa-regular fa-credit-card absolute left-3 top-2.5 text-gray-400"></i>
+                                </div>
+                             </div>
+                             <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Expiry Date</label>
+                                    <input type="text" placeholder="MM/YY" class="w-full px-4 py-2 rounded border border-gray-300 focus:border-brand-green outline-none text-sm bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">CVV</label>
+                                    <div class="relative">
+                                        <input type="password" placeholder="123" class="w-full px-4 py-2 rounded border border-gray-300 focus:border-brand-green outline-none text-sm bg-white">
+                                        <i class="fa-solid fa-lock absolute right-3 top-2.5 text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Secure Notice -->
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mt-6 flex gap-3 items-start">
+                        <i class="fa-solid fa-circle-info text-blue-600 mt-1 text-sm"></i>
+                        <div>
+                            <p class="text-xs font-bold text-blue-800">Secure Payment Gateway</p>
+                            <p class="text-[10px] text-blue-600 leading-tight mt-1">Your payment information is encrypted and secure.</p>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="submitOrder()" class="w-full bg-brand-green text-white py-3 rounded-lg font-bold hover:bg-green-600 transition shadow-lg mt-6 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock"></i> Submit Order <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                    <!-- Trust Badges -->
+                    <div class="flex flex-col gap-2 mt-6 text-[10px] text-gray-500 items-center">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-green-500"></i> 256-bit SSL Encryption</span>
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-truck-fast text-green-500"></i> Fast & Reliable Delivery</span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= ORDER SUCCESS MODAL ================= -->
+    <div id="success-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="modal-content relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-check text-4xl text-brand-green"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Order Submitted!</h2>
+            <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                Your order has been submitted successfully and is pending approval. You will be notified once it's confirmed.
+            </p>
+            <div class="bg-gray-50 p-3 rounded-lg text-xs text-gray-500 mb-6">
+                Redirecting to Dashboard in <span id="countdown" class="font-bold text-brand-green">3</span> seconds...
+            </div>
+            <a href="dashboard.html" class="block w-full bg-brand-green text-white py-3 rounded-lg font-bold hover:bg-green-600 transition shadow-lg">
+                Go to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- 2. FOOTER (Injected by footer.js) -->
+    <div id="global-footer"></div>
+
+    <!-- 3. SCRIPTS (Load Order Important) -->
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
+
+    <!-- PAGE SPECIFIC SCRIPT (Order Logic) -->
+    <script>
+        // --- 1. Load User Info for Pre-filling ---
+        const user = JSON.parse(localStorage.getItem('userInfo'));
+        if (user) {
+            document.getElementById('cust-name').value = user.name || '';
+        }
+        
+        // --- 2. Payment Method Toggle Logic ---
+        const paymentRadios = document.querySelectorAll('input[name="payment"]');
+        const cardDetails = document.getElementById('card-details-wrapper');
+        
+        paymentRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const type = e.target.dataset.type;
+                if(type === 'card') {
+                    cardDetails.classList.remove('hidden-height');
+                    cardDetails.classList.add('visible-height');
+                } else {
+                    cardDetails.classList.remove('visible-height');
+                    cardDetails.classList.add('hidden-height');
+                }
+            });
+        });
+
+        // --- 3. Dynamic Price Calculation ---
+        function calculateTotal() {
+            let cart = JSON.parse(localStorage.getItem('hasc_cart')) || [];
+            const urlParams = new URLSearchParams(window.location.search);
+            const planPrice = urlParams.get('price');
+            const planName = urlParams.get('plan');
+            
+            let subtotal = 0;
+            const itemsList = document.getElementById('checkout-items-list');
+            itemsList.innerHTML = ''; 
+
+            if (cart.length > 0) {
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.qty;
+                    subtotal += itemTotal;
+                    const line = document.createElement('div');
+                    line.className = "flex justify-between";
+                    line.innerHTML = `<span>${item.name} (x${item.qty})</span><span>PKR ${itemTotal.toLocaleString()}</span>`;
+                    itemsList.appendChild(line);
+                });
+            } else if (planPrice) {
+                const priceVal = parseInt(planPrice);
+                subtotal = priceVal;
+                const line = document.createElement('div');
+                line.className = "flex justify-between";
+                line.innerHTML = `<span>${planName}</span><span>PKR ${priceVal.toLocaleString()}</span>`;
+                itemsList.appendChild(line);
+            }
+
+            // DELIVERY CHARGES REMOVED (Set to 0)
+            const delivery = 0; 
+            const tax = Math.round(subtotal * 0.02); 
+            const total = subtotal + delivery + tax;
+
+            document.getElementById('checkout-subtotal').innerText = "PKR " + subtotal.toLocaleString();
+            document.getElementById('checkout-tax').innerText = "PKR " + tax.toLocaleString();
+            document.getElementById('checkout-total').innerText = "PKR " + total.toLocaleString();
+        }
+
+        window.addEventListener('DOMContentLoaded', calculateTotal);
+
+        // --- 4. Submit Order & Auto-Approve Logic ---
+        function submitOrder() {
+            // Show processing visual
+            const successModal = document.getElementById('success-modal');
+            successModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // --- CORE LOGIC: SEPARATE ANIMALS FROM SUBSCRIPTIONS ---
+            const cartItems = JSON.parse(localStorage.getItem('hasc_cart')) || [];
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlPlanName = urlParams.get('plan');
+
+            let currentLivestock = JSON.parse(localStorage.getItem('hasc_livestock_data')) || [];
+            let subData = JSON.parse(localStorage.getItem('hasc_subscription')) || { expiry: new Date().toISOString(), active: false };
+            let hasSubscriptionUpdate = false;
+
+            // 1. Process Cart Items
+            if (cartItems.length > 0) {
+                const newAnimals = [];
+
+                cartItems.forEach(item => {
+                    // Check if item is a Subscription Plan (contains "Plan" in name)
+                    if (item.name.toLowerCase().includes('plan')) {
+                        // --- SUBSCRIPTION LOGIC ---
+                        let currentExpiry = new Date(subData.expiry);
+                        const now = new Date();
+                        // If expired or not active, start from today
+                        if(currentExpiry < now || !subData.active) currentExpiry = now;
+                        
+                        // Add 30 Days
+                        currentExpiry.setDate(currentExpiry.getDate() + 30);
+                        
+                        // Clean plan name (remove " Plan" suffix for dashboard display consistency)
+                        let cleanPlanName = item.name.replace(/ Plan/i, '').trim();
+
+                        subData = {
+                            plan: cleanPlanName,
+                            expiry: currentExpiry.toISOString(),
+                            active: true
+                        };
+                        hasSubscriptionUpdate = true;
+                    } else {
+                        // --- ANIMAL LOGIC ---
+                        let baseWeight = 40; 
+                        let type = 'Goat';
+                        
+                        if(item.name.toLowerCase().includes('cow') || item.name.toLowerCase().includes('bull')) {
+                             baseWeight = 350; type = 'Cattle'; 
+                        } else if(item.name.toLowerCase().includes('camel')) { 
+                             baseWeight = 500; type = 'Camel'; 
+                        } else if(item.name.toLowerCase().includes('sheep')) {
+                             baseWeight = 45; type = 'Sheep';
+                        }
+
+                        newAnimals.push({
+                            id: 'TAG-' + Math.floor(1000 + Math.random() * 9000), 
+                            name: item.name,
+                            initialWeight: baseWeight,
+                            purchaseDate: new Date().toISOString(),
+                            age: '1.5 Years',
+                            health: 'Excellent',
+                            img: item.img,
+                            type: type,
+                            growth: [baseWeight, baseWeight + 2, baseWeight + 4, baseWeight + 6]
+                        });
+                    }
+                });
+
+                // Save Animals if any
+                if (newAnimals.length > 0) {
+                    localStorage.setItem('hasc_livestock_data', JSON.stringify([...currentLivestock, ...newAnimals]));
+                }
+            }
+
+            // 2. Handle Direct URL Subscription (Fallback)
+            if (urlPlanName) {
+                let currentExpiry = new Date(subData.expiry);
+                const now = new Date();
+                if(currentExpiry < now || !subData.active) currentExpiry = now;
+                currentExpiry.setDate(currentExpiry.getDate() + 30);
+                
+                subData = {
+                    plan: urlPlanName, // URL usually passes simplified name
+                    expiry: currentExpiry.toISOString(),
+                    active: true
+                };
+                hasSubscriptionUpdate = true;
+            }
+
+            // 3. Save Subscription Updates
+            if (hasSubscriptionUpdate) {
+                localStorage.setItem('hasc_subscription', JSON.stringify(subData));
+            }
+            
+            // 4. Clear Cart
+            localStorage.removeItem('hasc_cart');
+
+            // --- REDIRECT LOGIC ---
+            let count = 3;
+            const timer = setInterval(() => {
+                count--;
+                const countEl = document.getElementById('countdown');
+                if(countEl) countEl.innerText = count;
+                
+                if(count <= 0) {
+                    clearInterval(timer);
+                    window.location.href = 'dashboard.html';
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

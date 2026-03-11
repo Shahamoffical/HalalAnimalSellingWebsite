@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed & Care - HASC</title>
+    <!-- Tailwind CSS (Local Build) -->
+    <link rel="stylesheet" href="src/output.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-brand-green { background-color: #22c55e; }
+        .text-brand-green { color: #22c55e; }
+        .hover-brand-green:hover { background-color: #16a34a; }
+        .bg-brand-dark { background-color: #0F5132; }
+        
+        /* Accordion Styles */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: sweep .5s ease-in-out; }
+        @keyframes sweep {
+            0%    {opacity: 0; margin-top: -10px}
+            100%  {opacity: 1; margin-top: 0px}
+        }
+
+        /* Modal Transition Styles (Required for injected modals) */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800 relative">
+
+    <!-- 1. HEADER (Injected by header.js) -->
+    <div id="global-header"></div>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section class="relative h-[600px] flex items-center">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="Assets/Feed&Care Hero.jpg" alt="Feeding Goat" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+        </div>
+
+        <div class="container mx-auto px-4 relative z-10 text-white max-w-3xl pt-20">
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                Premium Nutrition, <br> Optimal Health
+            </h1>
+            <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-xl font-light">
+                Discover our commitment to animal welfare and the finest Halal-certified feed for your livestock.
+            </p>
+            <a href="#products" class="bg-brand-green text-white px-8 py-3 rounded-md font-semibold hover-brand-green transition inline-flex items-center gap-2 shadow-lg">
+                Explore Our Products <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- ================= PLEDGE SECTION ================= -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <!-- Text Side -->
+                <div class="w-full lg:w-1/2">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Our Pledge: Healthy Animals, Ethical Practices</h2>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        At HASC, we believe that true care starts from the ground up. Our commitment to animal welfare goes beyond industry standards, ensuring stress-free environments, premium nutrition, and compassionate handling for every animal.
+                    </p>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        We adhere strictly to Halal guidelines, not just in slaughtering but in farming practices. Zero hormones, zero antibiotics, and zero cruelty. Just pure, organic feed and open pastures.
+                    </p>
+                    <div class="flex gap-4 mt-8">
+                        <div class="flex items-center gap-2 text-brand-green font-medium">
+                            <i class="fa-solid fa-check-circle"></i> 100% Organic
+                        </div>
+                        <div class="flex items-center gap-2 text-brand-green font-medium">
+                            <i class="fa-solid fa-check-circle"></i> Cruelty Free
+                        </div>
+                    </div>
+                </div>
+                <!-- Collage Side -->
+                <div class="w-full lg:w-1/2 grid grid-cols-2 gap-4">
+                    <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=800&auto=format&fit=crop" class="rounded-2xl w-full h-48 object-cover shadow-md">
+                    <img src="Assets/2.jpg" class="rounded-2xl w-full h-48 object-cover shadow-md mt-8">
+                    <img src="https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?q=80&w=800&auto=format&fit=crop" class="rounded-2xl w-full h-48 object-cover shadow-md">
+                    <img src="Assets/4.jpg" class="rounded-2xl w-full h-48 object-cover shadow-md mt-8">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PRODUCTS SECTION ================= -->
+    <section id="products" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Nourish Your Livestock with the Best</h2>
+                <p class="text-gray-600">Our curated feed selection designed to ensure healthy growth and vitality.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition border border-gray-100 group">
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-brand-green text-2xl mb-6 group-hover:bg-brand-green group-hover:text-white transition">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Halal Organic Grains</h3>
+                    <p class="text-gray-500 text-sm mb-6 leading-relaxed">Specially formulated for energy and growth, free from artificial additives or non-halal byproducts.</p>
+                    <button onclick="addToCart('Halal Organic Grains', '2,500', 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=400')" class="text-brand-green font-semibold text-sm hover:underline flex items-center gap-1">
+                        Add to Cart <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition border border-gray-100 group">
+                    <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 text-2xl mb-6 group-hover:bg-yellow-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Premium Forage</h3>
+                    <p class="text-gray-500 text-sm mb-6 leading-relaxed">Essential vitamins and minerals from natural sources like Alfalfa and Rhodes grass for balanced health.</p>
+                    <button onclick="addToCart('Premium Forage', '1,800', 'https://images.unsplash.com/photo-1596733430284-f74377bc2184?q=80&w=400')" class="text-brand-green font-semibold text-sm hover:underline flex items-center gap-1">
+                        Add to Cart <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                    </button>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition border border-gray-100 group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-2xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Tailored Programs</h3>
+                    <p class="text-gray-500 text-sm mb-6 leading-relaxed">Custom diet plans for different life stages and specific breeds to maximize yield and health.</p>
+                    <a href="#plans" class="text-brand-green font-semibold text-sm hover:underline flex items-center gap-1">
+                        Select Plan <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= VET CARE SECTION ================= -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">Beyond Feed: Comprehensive Animal Welfare</h2>
+                <p class="text-gray-500 mt-2">Expert care and support assuring the health and happiness of your livestock.</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <!-- Image Side -->
+                <div class="w-full lg:w-1/2">
+                    <div class="rounded-3xl overflow-hidden shadow-xl relative h-[500px]">
+                        <img src="Assets/DOC.jpg" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <!-- Features Side -->
+                <div class="w-full lg:w-1/2 space-y-8">
+                    <!-- Feature 1 -->
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 bg-green-50 rounded-lg flex-shrink-0 flex items-center justify-center text-brand-green text-xl">
+                            <i class="fa-solid fa-stethoscope"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2">24/7 Veterinary Guidance</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">Access to our network of experienced veterinarians for urgent advice and routine check-ups. We monitor health markers in real-time.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 bg-green-50 rounded-lg flex-shrink-0 flex items-center justify-center text-brand-green text-xl">
+                            <i class="fa-solid fa-syringe"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2">Vaccination & Health Protocols</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">Strict vaccination schedules and health screenings ensure disease-free, robust animals ready for farming or Qurbani.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex gap-5">
+                        <div class="w-12 h-12 bg-green-50 rounded-lg flex-shrink-0 flex items-center justify-center text-brand-green text-xl">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2">Ethical Rearing Practices</h4>
+                            <p class="text-gray-600 text-sm leading-relaxed">We champion humane treatment, spacious environments, and stress-free handling for all livestock.</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <a href="contactUs.html" class="bg-brand-dark text-white px-8 py-3 rounded-md hover:bg-opacity-90 transition">Request Consultation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= SUBSCRIPTION SECTION ================= -->
+    <section id="plans" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Never Run Out: Subscribe & Save</h2>
+                <p class="text-gray-600">Convenient delivery plans that ensure your livestock always has the nutrition they need.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                
+                <!-- Plan 1 -->
+                <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+                    <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Basic</span>
+                    <h3 class="text-xl font-bold mt-2 mb-4">Monthly Essential</h3>
+                    <div class="flex items-baseline mb-6">
+                        <span class="text-4xl font-bold text-gray-900">PKR 9,999</span>
+                        <span class="text-gray-500 ml-2">/ month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-green"></i> 50kg Standard Feed</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-green"></i> Basic Health Guide</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-green"></i> Monthly Delivery</li>
+                    </ul>
+                    <!-- ADDED ONCLICK EVENT -->
+                    <button onclick="addToCart('Basic Plan', '9,999', 'https://images.unsplash.com/photo-1547969399-556488d752f4?q=80&w=400')" class="w-full py-3 rounded-lg border-2 border-brand-dark bg-brand-dark text-white font-semibold hover:bg-brand-dark hover:text-white transition">Subscribe Now</button>
+                </div>
+
+                <!-- Plan 2 (Highlighted) -->
+                <div class="bg-brand-dark text-white p-10 rounded-2xl shadow-xl relative transform md:-translate-y-4">
+                    <span class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-brand-dark text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</span>
+                    <span class="text-sm font-semibold text-gray-300 uppercase tracking-wide">Standard</span>
+                    <h3 class="text-2xl font-bold mt-2 mb-4">Premium Welfare Bundle</h3>
+                    <div class="flex items-baseline mb-6">
+                        <span class="text-5xl font-bold text-white">PKR 19,999</span>
+                        <span class="text-gray-300 ml-2">/ month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-200">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400"></i> 100kg Premium Feed</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400"></i> 1 Virtual Vet Visit</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400"></i> Free Priority Delivery</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-yellow-400"></i> Vitamin Supplements</li>
+                    </ul>
+                    <!-- ADDED ONCLICK EVENT -->
+                    <button onclick="addToCart('Standard Plan', '19,999', 'https://images.unsplash.com/photo-1547969399-556488d752f4?q=80&w=400')" class="w-full py-3 rounded-lg bg-white  text-black  font-bold hover:text-black hover:bg-gray transition">Subscribe Now</button>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+                    <span class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Enterprise</span>
+                    <h3 class="text-xl font-bold mt-2 mb-4">Custom Annual Plan</h3>
+                    <div class="flex items-baseline mb-6">
+                        <span class="text-4xl font-bold text-gray-900">PKR 99,999</span>
+                        <span class="text-gray-500 ml-2">/ year</span>
+                    </div>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-600">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-green"></i> Custom Bulk Feed</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-green"></i> 24/7 Vet Support</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-green"></i> Full Vaccination</li>
+                    </ul>
+                    <!-- ADDED ONCLICK EVENT -->
+                    <button onclick="addToCart('Enterprise Plan', '99,999', 'https://images.unsplash.com/photo-1547969399-556488d752f4?q=80&w=400')" class="w-full py-3 rounded-lg border-2 border-brand-dark bg-brand-dark text-white font-semibold hover:bg-brand-dark hover:text-white transition">Subscribe Now</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FAQ SECTION ================= -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-2">Your Questions, Answered</h2>
+            <p class="text-center text-gray-500 mb-12">Everything you need to know about our feed and care services.</p>
+
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <details class="group bg-gray-50 rounded-xl overflow-hidden cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium p-5 text-gray-800 hover:bg-gray-100 transition">
+                        What makes HASC feed Halal?
+                        <span class="text-brand-green group-open:rotate-180 transition transform"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+                        Our feed is composed strictly of plant-based ingredients (grains, forage) and minerals. We ensure no animal by-products, blood meal, or haram additives are ever used in the production process.
+                    </div>
+                </details>
+
+                <!-- FAQ 2 -->
+                <details class="group bg-gray-50 rounded-xl overflow-hidden cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium p-5 text-gray-800 hover:bg-gray-100 transition">
+                        How do your veterinary services work?
+                        <span class="text-brand-green group-open:rotate-180 transition transform"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+                        You can book a virtual consultation or a physical visit through our portal. Our licensed vets will assess your animal via video call or on-site visit and prescribe necessary treatments.
+                    </div>
+                </details>
+
+                <!-- FAQ 3 -->
+                <details class="group bg-gray-50 rounded-xl overflow-hidden cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium p-5 text-gray-800 hover:bg-gray-100 transition">
+                        Can I customize my feed subscription?
+                        <span class="text-brand-green group-open:rotate-180 transition transform"><i class="fa-solid fa-chevron-down"></i></span>
+                    </summary>
+                    <div class="p-5 pt-0 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+                        Yes! Our nutritionist can create a custom blend based on your herd size and breed. Contact support to set up a custom plan.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CTA BANNER ================= -->
+    <section class="bg-brand-green relative overflow-hidden py-16">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/grass.png')] opacity-10"></div>
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <h2 class="text-3xl font-bold text-white mb-4">Need Tailored Feed & Care Advice?</h2>
+            <p class="text-green-100 mb-8 max-w-2xl mx-auto">Our experts are ready to help you choose the best for your livestock. Contact us today for personalized plans.</p>
+            <a href="contactUs.html" class="bg-white text-brand-green px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition inline-flex items-center gap-2">
+                Get Free Consultation <i class="fa-solid fa-comment-dots"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 2. FOOTER (Injected by footer.js) -->
+    <div id="global-footer"></div>
+
+    <!-- 3. SCRIPTS (Load Order Important) -->
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
+
+</body>
+</html>

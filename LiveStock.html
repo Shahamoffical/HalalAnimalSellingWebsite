@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Livestock - HASC</title>
+    <!-- Tailwind CSS (Local Build) -->
+    <link rel="stylesheet" href="src/output.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-brand-green { background-color: #22c55e; }
+        .bg-brand-dark { background-color: #0F5132; }
+        .text-brand-green { color: #22c55e; }
+        .text-brand-dark { color: #0F5132; }
+        
+        /* Custom Range Slider Styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px; width: 16px;
+            border-radius: 50%; background: #22c55e;
+            cursor: pointer; margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px;
+            cursor: pointer; background: #e5e7eb; border-radius: 2px;
+        }
+
+        /* Modal Transition Styles (Required for injected modals) */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Pagination Styles */
+        .page-btn.active {
+            background-color: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 relative">
+
+    <!-- ================= HEADER (Loaded from header.js) ================= -->
+    <div id="global-header"></div>
+
+    <!-- ================= PAGE TITLE HERO ================= -->
+    <section class="bg-brand-green py-12 text-white">
+        <div class="container mx-auto px-4">
+            <p class="text-sm opacity-90 mb-2">Home > Livestock</p>
+            <h1 class="text-4xl font-bold mb-2">Premium Livestock Inventory</h1>
+            <p class="opacity-90">Healthy, Vaccinated, and Qurbani Ready</p>
+        </div>
+    </section>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <section class="py-12 container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- SIDEBAR FILTERS (Left) -->
+            <aside class="w-full lg:w-1/4 space-y-8">
+                <!-- Search -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold mb-4">Search</h3>
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search by Tag ID or Breed" class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-green text-sm">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Filters Form -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <!-- Animal Type -->
+                    <div class="mb-6">
+                        <h3 class="font-bold mb-3 text-sm">Animal Type</h3>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <label class="flex items-center gap-2"><input type="checkbox" name="animalType" value="cow" class="rounded text-brand-green focus:ring-brand-green"> Cows <span class="ml-auto text-gray-400">(24)</span></label>
+                            <label class="flex items-center gap-2"><input type="checkbox" name="animalType" value="bull" class="rounded text-brand-green focus:ring-brand-green"> Bulls <span class="ml-auto text-gray-400">(18)</span></label>
+                            <label class="flex items-center gap-2"><input type="checkbox" name="animalType" value="goat" class="rounded text-brand-green focus:ring-brand-green"> Goats <span class="ml-auto text-gray-400">(32)</span></label>
+                            <label class="flex items-center gap-2"><input type="checkbox" name="animalType" value="sheep" class="rounded text-brand-green focus:ring-brand-green"> Sheep <span class="ml-auto text-gray-400">(15)</span></label>
+                            <label class="flex items-center gap-2"><input type="checkbox" name="animalType" value="camel" class="rounded text-brand-green focus:ring-brand-green"> Camels <span class="ml-auto text-gray-400">(8)</span></label>
+                        </div>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-6">
+                        <h3 class="font-bold mb-3 text-sm">Max Price: <span id="priceValue" class="text-brand-green">500,000</span></h3>
+                        <input type="range" id="priceRange" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="0" max="500000" value="500000" oninput="document.getElementById('priceValue').innerText = parseInt(this.value).toLocaleString()">
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>0</span>
+                            <span>500k</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Weight -->
+                    <div class="mb-6">
+                        <h3 class="font-bold mb-3 text-sm">Max Weight: <span id="weightValue" class="text-brand-green">800</span> kg</h3>
+                        <input type="range" id="weightRange" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" min="20" max="800" value="800" oninput="document.getElementById('weightValue').innerText = this.value">
+                        <div class="flex justify-between text-xs text-gray-500 mt-2">
+                            <span>20 kg</span>
+                            <span>800 kg</span>
+                        </div>
+                    </div>
+
+                    <!-- Dropdowns -->
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold mb-1">Age (Years)</label>
+                            <select id="ageSelect" class="w-full border border-gray-200 rounded p-2 text-sm text-gray-600">
+                                <option value="all">All Ages</option>
+                                <option value="1">1 Year</option>
+                                <option value="2">2 Years</option>
+                                <option value="3">3 Years</option>
+                                <option value="4">4 Years</option>
+                                <option value="5">5+ Years</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-1">Gender</label>
+                            <select id="genderSelect" class="w-full border border-gray-200 rounded p-2 text-sm text-gray-600">
+                                <option value="all">All</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="filterBtn" class="w-full bg-brand-green text-white py-2 rounded-lg font-medium hover:bg-green-600 transition">Apply Filters</button>
+                </div>
+            </aside>
+
+            <!-- PRODUCT GRID (Right) -->
+            <main class="w-full lg:w-3/4">
+                <!-- Top Bar -->
+                <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                    <span class="text-sm text-gray-600" id="resultsCount">Showing results</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">Sort by:</span>
+                        <select class="border-none bg-transparent text-sm font-medium focus:ring-0 cursor-pointer">
+                            <option>Newest Arrivals</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Animals Grid -->
+                <!-- Added data attributes for filtering -->
+                <!-- Duplicated items to ensure 12 items total for pagination demo -->
+                <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Product 1 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                         data-name="White Sahiwal Bull" data-type="cow" data-price="185000" data-weight="450" data-age="2" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 left-3 bg-brand-green text-white text-xs px-2 py-1 rounded">In Stock</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">White Sahiwal Bull</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3">
+                                <span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 450 kg</span>
+                                <span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 2 Years</span>
+                            </div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 185,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('White Sahiwal Bull', '185,000', '450 kg', '2 Years', 'Male', 'White', 'In Stock', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=800')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('White Sahiwal Bull', '185,000', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 2 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group"
+                         data-name="Cholistani Camel" data-type="camel" data-price="295000" data-weight="520" data-age="3" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="Assets/Cholistani-Camel.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 bg-yellow-400 text-white text-xs px-2 py-1 rounded">New Arrival</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Cholistani Camel</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3">
+                                <span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 520 kg</span>
+                                <span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 3 Years</span>
+                            </div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 295,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Cholistani Camel', '295,000', '520 kg', '3 Years', 'Male', 'Brown', 'New Arrival', 'https://images.unsplash.com/photo-1598089901460-e74c87893a90?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Cholistani Camel', '295,000', 'https://images.unsplash.com/photo-1598089901460-e74c87893a90?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 3 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group"
+                         data-name="Beetal Goat" data-type="goat" data-price="42000" data-weight="65" data-age="1" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 left-3 bg-brand-green text-white text-xs px-2 py-1 rounded">Qurbani Ready</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Beetal Goat</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3">
+                                <span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 65 kg</span>
+                                <span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 1.5 Years</span>
+                            </div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 42,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Beetal Goat', '42,000', '65 kg', '1.5 Years', 'Male', 'Black/Brown', 'Qurbani Ready', 'https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Beetal Goat', '42,000', 'https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 4 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group"
+                         data-name="Red Sindhi Cow" data-type="cow" data-price="165000" data-weight="380" data-age="2" data-gender="female">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="Assets/Red Sindhi cow.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 left-3 bg-brand-green text-white text-xs px-2 py-1 rounded">In Stock</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Red Sindhi Cow</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3">
+                                <span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 380 kg</span>
+                                <span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 2.5 Years</span>
+                            </div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 165,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Red Sindhi Cow', '165,000', '380 kg', '2.5 Years', 'Female', 'Red', 'In Stock', 'https://images.unsplash.com/photo-1538317730302-3c87029517dc?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Red Sindhi Cow', '165,000', 'https://images.unsplash.com/photo-1538317730302-3c87029517dc?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 5 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group"
+                         data-name="Damani Sheep" data-type="sheep" data-price="28500" data-weight="40" data-age="1" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="Assets/Sheep M.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Damani Sheep</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3">
+                                <span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 40 kg</span>
+                                <span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 1 Year</span>
+                            </div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 28,500</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Damani Sheep', '28,500', '40 kg', '1 Year', 'Male', 'White', 'In Stock', 'https://images.unsplash.com/photo-1484557985045-6f5837f4112c?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Damani Sheep', '28,500', 'https://images.unsplash.com/photo-1484557985045-6f5837f4112c?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 6 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group"
+                         data-name="Friesian Bull" data-type="bull" data-price="325000" data-weight="580" data-age="3" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 bg-yellow-400 text-white text-xs px-2 py-1 rounded">New Arrival</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Friesian Bull</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3">
+                                <span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 580 kg</span>
+                                <span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 3 Years</span>
+                            </div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 325,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Friesian Bull', '325,000', '580 kg', '3 Years', 'Male', 'Black & White', 'New Arrival', 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Friesian Bull', '325,000', 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Product 7 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                         data-name="Angus Bull" data-type="bull" data-price="210000" data-weight="500" data-age="2.5" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                             <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                             <span class="absolute top-3 left-3 bg-brand-green text-white text-xs px-2 py-1 rounded">In Stock</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Angus Bull</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3"><span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 500 kg</span><span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 2.5 Years</span></div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 210,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Angus Bull', '210,000', '500 kg', '2.5 Years', 'Male', 'Black', 'In Stock', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Angus Bull', '210,000', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 8 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                     data-name="Barbari Goat" data-type="goat" data-price="35000" data-weight="30" data-age="1" data-gender="female">
+                        <div class="relative h-48 overflow-hidden">
+                             <img src="https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Barbari Goat</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3"><span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 30 kg</span><span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 1 Year</span></div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 35,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Barbari Goat', '35,000', '30 kg', '1 Year', 'Female', 'White/Spotted', 'In Stock', 'https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Barbari Goat', '35,000', 'https://images.unsplash.com/photo-1524024973431-2ad916746881?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product 9 -->
+                    <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                     data-name="Kajla Sheep" data-type="sheep" data-price="45000" data-weight="55" data-age="1.5" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                             <img src="Assets/Sheep.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Kajla Sheep</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3"><span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 55 kg</span><span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 1.5 Years</span></div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 45,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Kajla Sheep', '45,000', '55 kg', '1.5 Years', 'Male', 'White/Black', 'In Stock', 'https://images.unsplash.com/photo-1484557985045-6f5837f4112c?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Kajla Sheep', '45,000', 'https://images.unsplash.com/photo-1484557985045-6f5837f4112c?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Product 10 -->
+                     <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                     data-name="Jersey Cow" data-type="cow" data-price="220000" data-weight="400" data-age="3" data-gender="female">
+                        <div class="relative h-48 overflow-hidden">
+                             <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Jersey Cow</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3"><span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 400 kg</span><span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 3 Years</span></div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 220,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Jersey Cow', '220,000', '400 kg', '3 Years', 'Female', 'Light Brown', 'In Stock', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Jersey Cow', '220,000', 'https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Product 11 -->
+                     <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                     data-name="Marecha Camel" data-type="camel" data-price="350000" data-weight="600" data-age="4" data-gender="male">
+                        <div class="relative h-48 overflow-hidden">
+                             <img src="Assets/Cholistani-Camel.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Marecha Camel</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3"><span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 600 kg</span><span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 4 Years</span></div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 350,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Marecha Camel', '350,000', '600 kg', '4 Years', 'Male', 'Brown', 'In Stock', 'https://images.unsplash.com/photo-1598089901460-e74c87893a90?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Marecha Camel', '350,000', 'https://images.unsplash.com/photo-1598089901460-e74c87893a90?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- Product 12 -->
+                     <div class="product-card bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition overflow-hidden group" 
+                     data-name="Teddy Goat" data-type="goat" data-price="25000" data-weight="25" data-age="0.8" data-gender="female">
+                        <div class="relative h-48 overflow-hidden">
+                             <img src="Assets/Tadi Goat.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1">Teddy Goat</h3>
+                            <div class="flex gap-4 text-xs text-gray-500 mb-3"><span><i class="fa-solid fa-weight-hanging text-brand-green mr-1"></i> 25 kg</span><span><i class="fa-regular fa-calendar text-brand-green mr-1"></i> 10 Months</span></div>
+                            <p class="text-brand-green font-bold text-lg mb-4">PKR 25,000</p>
+                            <div class="flex gap-2">
+                                <button onclick="viewDetails('Teddy Goat', '25,000', '25 kg', '10 Months', 'Female', 'Black/White', 'In Stock', 'https://images.unsplash.com/photo-1547969399-556488d752f4?q=80&w=400')" class="flex-1 border border-brand-green text-brand-green py-2 rounded-lg text-xs font-medium hover:bg-green-50 transition">View Details</button>
+                                <button onclick="addToCart('Teddy Goat', '25,000', 'https://images.unsplash.com/photo-1547969399-556488d752f4?q=80&w=400')" class="flex-1 bg-brand-green text-white py-2 rounded-lg text-xs font-medium hover:bg-green-600 transition">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-center mt-12 gap-2" id="paginationControls">
+                    <!-- Pagination buttons generated by JS -->
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- ================= FOOTER (Loaded from footer.js) ================= -->
+    <div id="global-footer"></div>
+
+    <!-- 2. SCRIPTS -->
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
+    <script src="footer.js"></script>
+    
+    <!-- ================= DETAILS MODAL ================= -->
+    <div id="details-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('details-modal')"></div>
+        <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-auto">
+            <button onclick="closeModal('details-modal')" class="absolute top-4 right-4 z-20 text-gray-500 hover:text-gray-800 bg-white/80 rounded-full p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <div class="w-full md:w-1/2 h-64 md:h-auto relative">
+                <img id="detail-img" src="" class="w-full h-full object-cover">
+                <span id="detail-status" class="absolute top-4 left-4 bg-brand-green text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm">In Stock</span>
+            </div>
+            
+            <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
+                <h2 id="detail-name" class="text-2xl font-bold text-gray-900 mb-2">Animal Name</h2>
+                <p id="detail-price" class="text-xl font-bold text-brand-green mb-6">PKR 0</p>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 text-sm">Weight</span><span id="detail-weight" class="font-semibold text-gray-800 text-sm">0 kg</span></div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 text-sm">Age</span><span id="detail-age" class="font-semibold text-gray-800 text-sm">0 Years</span></div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 text-sm">Gender</span><span id="detail-gender" class="font-semibold text-gray-800 text-sm">Male</span></div>
+                    <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 text-sm">Color</span><span id="detail-color" class="font-semibold text-gray-800 text-sm">White</span></div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button id="modal-add-to-cart" class="flex-1 bg-brand-green text-white py-3 rounded-lg font-medium hover:bg-green-600 transition">Add to Cart</button>
+                    <button onclick="closeModal('details-modal')" class="flex-1 border border-gray-200 text-gray-600 py-3 rounded-lg font-medium hover:bg-gray-50 transition">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE SPECIFIC SCRIPTS -->
+    <script>
+        const ITEMS_PER_PAGE = 6; 
+        let paginationPage = 1; 
+        let filteredProducts = []; 
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const cards = Array.from(document.querySelectorAll('.product-card'));
+            filteredProducts = cards;
+            updatePagination();
+            applyFilters();
+            
+            // Add Listeners
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('priceRange').addEventListener('input', applyFilters);
+            document.getElementById('weightRange').addEventListener('input', applyFilters);
+            document.getElementById('ageSelect').addEventListener('change', applyFilters);
+            document.getElementById('genderSelect').addEventListener('change', applyFilters);
+            document.querySelectorAll('input[name="animalType"]').forEach(cb => cb.addEventListener('change', applyFilters));
+        });
+        
+        // VIEW DETAILS
+        function viewDetails(name, price, weight, age, gender, color, status, img) {
+            document.getElementById('detail-name').innerText = name;
+            document.getElementById('detail-price').innerText = "PKR " + price;
+            document.getElementById('detail-weight').innerText = weight;
+            document.getElementById('detail-age').innerText = age;
+            document.getElementById('detail-gender').innerText = gender;
+            document.getElementById('detail-color').innerText = color;
+            document.getElementById('detail-status').innerText = status;
+            document.getElementById('detail-img').src = img;
+            
+            const addToCartBtn = document.getElementById('modal-add-to-cart');
+            const newBtn = addToCartBtn.cloneNode(true);
+            addToCartBtn.parentNode.replaceChild(newBtn, addToCartBtn);
+            newBtn.onclick = function() {
+                if (typeof addToCart === 'function') {
+                    addToCart(name, price, img);
+                    closeModal('details-modal');
+                }
+            };
+            
+            const m = document.getElementById('details-modal');
+            if(m) {
+                m.classList.add('active');
+                // Force show
+                m.style.opacity = '1';
+                m.style.visibility = 'visible';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // APPLY FILTERS
+        function applyFilters() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+            const checkedTypes = Array.from(document.querySelectorAll('input[name="animalType"]:checked')).map(cb => cb.value);
+            const maxPrice = parseInt(document.getElementById('priceRange').value);
+            const maxWeight = parseInt(document.getElementById('weightRange').value);
+            const selectedAge = document.getElementById('ageSelect').value;
+            const selectedGender = document.getElementById('genderSelect').value;
+
+            const allCards = Array.from(document.querySelectorAll('.product-card'));
+            
+            filteredProducts = allCards.filter(card => {
+                const name = card.dataset.name.toLowerCase();
+                const type = card.dataset.type;
+                const price = parseInt(card.dataset.price);
+                const weight = parseInt(card.dataset.weight);
+                const age = parseFloat(card.dataset.age);
+                const gender = card.dataset.gender;
+
+                const matchesSearch = name.includes(searchVal);
+                const matchesType = checkedTypes.length === 0 || checkedTypes.includes(type);
+                const matchesPrice = price <= maxPrice;
+                const matchesWeight = weight <= maxWeight;
+                
+                let matchesAge = true;
+                if(selectedAge !== 'all') {
+                    if(selectedAge === '5') matchesAge = age >= 5;
+                    else matchesAge = Math.floor(age) == parseInt(selectedAge);
+                }
+
+                let matchesGender = true;
+                if(selectedGender !== 'all') {
+                    matchesGender = gender.toLowerCase() === selectedGender.toLowerCase();
+                }
+
+                return matchesSearch && matchesType && matchesPrice && matchesWeight && matchesAge && matchesGender;
+            });
+            
+            paginationPage = 1; 
+            updatePagination();
+        }
+
+        // PAGINATION
+        function updatePagination() {
+            const totalItems = filteredProducts.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            
+            if (paginationPage > totalPages) paginationPage = totalPages || 1;
+            if (paginationPage < 1) paginationPage = 1;
+
+            const startIndex = (paginationPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+
+            // Hide all first
+            const allCards = document.querySelectorAll('.product-card');
+            allCards.forEach(card => card.style.display = 'none');
+
+            // Show current page items
+            filteredProducts.slice(startIndex, endIndex).forEach(card => {
+                card.style.display = 'block';
+            });
+
+            const countEl = document.getElementById('resultsCount');
+            if(countEl) countEl.innerHTML = `Showing <strong>${Math.min(startIndex + 1, totalItems)}-${Math.min(endIndex, totalItems)}</strong> of ${totalItems} results`;
+
+            renderPaginationControls(totalPages);
+        }
+
+        function renderPaginationControls(totalPages) {
+            const container = document.getElementById('paginationControls');
+            container.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `px-4 py-2 border rounded-lg text-gray-600 text-sm ${paginationPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`;
+            prevBtn.innerText = 'Previous';
+            prevBtn.onclick = () => changePage(paginationPage - 1);
+            container.appendChild(prevBtn);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                if (i === paginationPage) {
+                    pageBtn.className = 'w-10 h-10 bg-brand-green text-white rounded-lg text-sm font-bold page-btn active';
+                } else {
+                    pageBtn.className = 'w-10 h-10 border rounded-lg text-gray-600 hover:bg-gray-50 text-sm page-btn';
+                }
+                pageBtn.innerText = i;
+                pageBtn.onclick = () => changePage(i);
+                container.appendChild(pageBtn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `px-4 py-2 border rounded-lg text-gray-600 text-sm ${paginationPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`;
+            nextBtn.innerText = 'Next';
+            nextBtn.onclick = () => changePage(paginationPage + 1);
+            container.appendChild(nextBtn);
+        }
+
+        function changePage(newPage) {
+            const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+            if (newPage >= 1 && newPage <= totalPages) {
+                paginationPage = newPage;
+                updatePagination();
+                document.getElementById('productGrid').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Modal Functions - Fallback (UPDATED with Style Reset)
+        function closeModal(modalId) {
+             const m = document.getElementById(modalId);
+             if(m) {
+                m.classList.remove('active');
+                // FORCE HIDE styles to override auth.js/header.js inline styles
+                m.style.opacity = '0';
+                m.style.visibility = 'hidden';
+                document.body.style.overflow = 'auto';
+             }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") { 
+                const active = document.querySelector('.modal.active');
+                if(active) closeModal(active.id);
+            }
+        });
+    </script>
+</body>
+</html>

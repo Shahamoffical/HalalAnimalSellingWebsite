@@ -1,0 +1,31 @@
+
+
+
+Connect to HASC-Cluster
+
+
+
+You need to secure your MongoDB Atlas cluster before you can use it. Set which users and IP 
+addresses can access your cluster now. Read more 
+
+Add a connection IP address
+Your current IP address (72.255.11.232) has been added to enable local connectivity. 
+Only an IP address you add to your Access List will be able to connect to your project's 
+clusters. Add more later in Network Access.
+Create a database user
+A database user has been added to this project. Create another user later in Database Access.
+You'll need your database user's credentials in the next step.
+
+
+add anither database user 
+
+https://cloud.mongodb.com/v2/69406d6e4b6b65560cdabaee#/security/database/users
+
+
+
+ Copy the connection string, then open MongoDB Compass
+
+ Use this connection string in your application
+
+
+ mongodb+srv://hasc_admin:Admin12345@hasc-cluster.6nhnb8d.mongodb.net/
