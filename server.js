@@ -7,10 +7,13 @@ const connectDB = require('./config/db');
 // Load environment variables
 dotenv.config();
 
-// Connect to Database
-connectDB();
-
 const app = express();
+
+// Middleware to ensure DB connection on serverless calls
+app.use(async (req, res, next) => {
+    await connectDB();
+    next();
+});
 
 // Middleware
 app.use(cors()); 
@@ -30,6 +33,10 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`HASC Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' && require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`HASC Server running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
