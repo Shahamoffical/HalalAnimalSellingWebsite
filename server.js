@@ -26,9 +26,32 @@ app.use(express.static(path.join(__dirname)));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 
+const fs = require('fs');
+
 // Serve index.html as the homepage
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Dynamic route for HTML pages (case-insensitive & extension-agnostic)
+app.get('/:page', (req, res, next) => {
+    if (req.params.page.startsWith('api')) return next();
+
+    let pageName = req.params.page;
+    if (!pageName.endsWith('.html')) {
+        pageName += '.html';
+    }
+
+    try {
+        const files = fs.readdirSync(__dirname);
+        const match = files.find(f => f.toLowerCase() === pageName.toLowerCase());
+        if (match) {
+            return res.sendFile(path.join(__dirname, match));
+        }
+    } catch (err) {
+        console.error('File route error:', err);
+    }
+    next();
 });
 
 const PORT = process.env.PORT || 5000;

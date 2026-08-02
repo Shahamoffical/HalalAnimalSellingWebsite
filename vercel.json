@@ -1,9 +1,26 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/index.js"
+    },
+    {
+      "source": "/livestock(.*)",
+      "destination": "/LiveStock.html"
+    },
+    {
+      "source": "/aboutus(.*)",
+      "destination": "/aboutUs.html"
+    },
+    {
+      "source": "/checkout(.*)",
+      "destination": "/checkOut.html"
+    },
+    {
+      "source": "/contactus(.*)",
+      "destination": "/contactUs.html"
     }
   ]
 }
